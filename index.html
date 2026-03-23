@@ -4,14 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LLRE EMIS School System</title>
-  <!-- Fonts: non-blocking, with system fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="env-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     /* ============================================================
        DESIGN SYSTEM - LLRE EMIS
@@ -38,8 +36,8 @@
       --shadow-lg: 0 8px 40px rgba(13,27,42,0.25);
       --radius: 8px;
       --radius-lg: 16px;
-      --font-heading: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
-      --font-body: 'Barlow', Arial, sans-serif;
+      --font-heading: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
       --transition: all 0.2s ease;
     }
 
@@ -859,19 +857,6 @@
 </head>
 <body>
 
-<!-- Page loading indicator - hidden once JS runs -->
-<div id="page-loader" style="
-  position:fixed;inset:0;
-  background:linear-gradient(160deg,#0d1b2a 0%,#1b2e45 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:9999;color:white;font-family:Arial,sans-serif;">
-  <img src="logo.png" style="width:64px;height:64px;object-fit:contain;margin-bottom:20px;" onerror="this.style.display='none'"/>
-  <div style="font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:8px;">LLRE EMIS</div>
-  <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:24px;">Lilongwe Rural East</div>
-  <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.2);border-top-color:#f0a500;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:16px;">Loading system...</div>
-</div>
-
 <!-- ============================================================ TOAST CONTAINER -->
 <div id="toast-container"></div>
 
@@ -882,10 +867,10 @@
 <div id="login-page">
   <div class="login-card">
     <div class="login-logo">
-      
+      <img src="1.png" alt="LLRE Logo" onerror="this.style.display='none'"/>
       <div class="login-logo-text">
         <h1>LLRE EMIS</h1>
-        <p>Lilongwe Rural East — School System</p>
+        <p>Student Data Lookup System</p>
       </div>
     </div>
 
@@ -898,7 +883,7 @@
         type="email"
         id="login-email"
         class="form-input"
-        placeholder="500164@llre.emis or admin@llre.emis"
+  
         autocomplete="username"
       />
     </div>
@@ -933,7 +918,7 @@
   <div class="topbar">
     <div class="topbar-brand" style="gap:12px">
       <button class="mobile-nav-toggle" onclick="toggleSidebar()">☰</button>
-      
+      <img src="1.png" alt="Logo" onerror="this.style.display='none'"/>
       <span class="topbar-brand-text">LLRE <span>EMIS</span></span>
     </div>
     <div class="topbar-user">
@@ -953,13 +938,16 @@
       <div id="school-nav">
         <div class="nav-section-title">School Portal</div>
         <div class="nav-item active" data-page="school-dashboard" onclick="showPage('school-dashboard')">
-          <span class="icon">🔍</span> Find Learner (LIN)
-        </div>
-        <div class="nav-item" data-page="my-students" onclick="showPage('my-students')">
-          <span class="icon">👥</span> All Learners
+          <span class="icon">🏫</span> Dashboard
         </div>
         <div class="nav-item" data-page="add-student" onclick="showPage('add-student')">
-          <span class="icon">➕</span> New Registration
+          <span class="icon">➕</span> Add Student
+        </div>
+        <div class="nav-item" data-page="my-students" onclick="showPage('my-students')">
+          <span class="icon">👥</span> My Students
+        </div>
+        <div class="nav-item" data-page="search" onclick="showPage('search')">
+          <span class="icon">🔍</span> Search
         </div>
       </div>
 
@@ -991,8 +979,12 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
-      <!-- ====== SCHOOL DASHBOARD - LIN LOOKUP ====== -->
+      <!-- ====== SCHOOL DASHBOARD ====== -->
       <div class="page-panel active" id="panel-school-dashboard">
+        <div class="page-header">
+          <div class="page-title">School Dashboard</div>
+          <div class="page-subtitle">Overview of your school's student data</div>
+        </div>
 
         <div class="school-info-banner" id="school-banner">
           <h2 id="banner-school-name">Loading school info...</h2>
@@ -1003,47 +995,10 @@
           </div>
         </div>
 
-        <!-- BIG LIN SEARCH -->
-        <div class="card" style="margin-bottom:20px; border-top: 4px solid var(--gold);">
-          <div class="card-body">
-            <div style="text-align:center; margin-bottom:20px;">
-              <div style="font-size:36px; margin-bottom:8px;">🔍</div>
-              <div style="font-family:var(--font-heading); font-size:26px; font-weight:800; color:var(--navy);">Find Learner LIN</div>
-              <div style="color:var(--gray-500); font-size:14px; margin-top:4px;">Search by name and year to get the Learner Identification Number</div>
-            </div>
-
-            <div style="display:flex; gap:12px; flex-wrap:wrap; max-width:600px; margin:0 auto;">
-              <div style="flex:2; min-width:180px;">
-                <label class="form-label">Learner Name or Surname</label>
-                <input type="text" id="lin-search-name" class="form-input" placeholder="e.g. BANDA or CHISOMO"
-                  style="font-size:17px; padding:14px 16px;"
-                  oninput="handleLINSearchInput()" onkeydown="if(event.key==='Enter') performLINSearch()"/>
-              </div>
-              <div style="flex:1; min-width:120px;">
-                <label class="form-label">Year</label>
-                <select id="lin-search-year" class="form-select" style="font-size:17px; padding:14px 16px;" onchange="performLINSearch()">
-                  <option value="">All Years</option>
-                </select>
-              </div>
-              <div style="display:flex; align-items:flex-end;">
-                <button class="btn btn-primary btn-lg" onclick="performLINSearch()" style="padding:14px 28px; font-size:16px;">
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- RESULTS -->
-        <div id="lin-results-container">
-          <!-- Results render here -->
-        </div>
-
-        <!-- Stats row at bottom -->
-        <div class="stats-grid" id="school-stats" style="margin-top:20px;">
+        <div class="stats-grid" id="school-stats">
           <div class="stat-card">
             <div class="stat-card-value" id="stat-total">—</div>
-            <div class="stat-card-label">Total Learners</div>
+            <div class="stat-card-label">Total Students</div>
           </div>
           <div class="stat-card">
             <div class="stat-card-value" id="stat-current-year">—</div>
@@ -1059,6 +1014,30 @@
           </div>
         </div>
 
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Students</div>
+            <button class="btn btn-ghost btn-sm" onclick="showPage('my-students')">View All →</button>
+          </div>
+          <div class="table-wrapper">
+            <table id="recent-students-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Surname</th>
+                  <th>Name</th>
+                  <th>Sex</th>
+                  <th>Class</th>
+                  <th>Year</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="recent-students-body">
+                <tr><td colspan="7"><div class="empty-state"><div class="loading-spinner loading-spinner-dark"></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <!-- ====== ADD STUDENT ====== -->
@@ -1401,12 +1380,9 @@
             <div class="alert alert-info mb-2">
               <span>📋</span>
               <div>
-                <strong>Upload your CSV files exactly as they are.</strong><br/>
-                The system accepts your original format:<br/>
-                <code>Zone, School, Surname, Name, LIN</code><br/>
-                <span class="text-sm mt-1" style="display:block;margin-top:6px;">&#x2022; <strong>LIN</strong> is your 16-digit learner number &mdash; year, EMIS and sequence are extracted automatically.<br/>
-                &#x2022; <strong>Age</strong> and <strong>Class</strong> are optional for historical data &mdash; leave blank if not available.<br/>
-                &#x2022; Extra columns are safely ignored &mdash; no need to modify your files.</span>
+                <strong>Required CSV columns:</strong><br/>
+                <code>student_id, emis_number, zone, year, surname, name, sex, age, class</code><br/>
+                <span class="text-sm">Set source to 'imported' automatically. Existing student_ids are preserved.</span>
               </div>
             </div>
 
@@ -1414,8 +1390,8 @@
               <label class="form-label">Upload CSV File(s)</label>
               <div class="upload-zone" onclick="document.getElementById('csv-file-input').click()">
                 <div class="upload-zone-icon">📂</div>
-                <div class="upload-zone-text">Click to choose CSV files — multiple files allowed</div>
-                <input type="file" id="csv-file-input" accept=".csv,.CSV" multiple style="display:none" onchange="handleCSVUpload(event)"/>
+                <div class="upload-zone-text">Click to choose CSV files (multiple allowed)</div>
+                <input type="file" id="csv-file-input" accept=".csv" multiple style="display:none" onchange="handleCSVUpload(event)"/>
               </div>
             </div>
 
@@ -1438,12 +1414,9 @@
             <button class="btn btn-ghost btn-sm" onclick="downloadCSVTemplate()">⬇ Download Template</button>
           </div>
           <div class="card-body">
-            <p class="text-sm text-muted mb-2" style="margin-bottom:10px;">Your original CSV format &mdash; upload as-is:</p>
-            <pre style="background:var(--navy); color:#e0e0e0; padding:16px; border-radius:var(--radius); font-size:12px; overflow-x:auto;">Zone,School,Surname,Name,LIN
-CHOWO,Chowo Primary School,BANDA,CHISOMO,2020165004000001
-CHOWO,Chowo Primary School,PHIRI,KONDWANI,2020165004000002</pre>
-            <p class="text-sm text-muted" style="margin-top:10px;">&#x2022; LIN format: <code>[YEAR][16][EMIS 6 digits][SEQUENCE 4 digits]</code><br/>
-            &#x2022; Example: <code>2020165004000001</code> = Year 2020, District 16, EMIS 500400, Learner 0001</p>
+            <pre style="background:var(--navy); color:#e0e0e0; padding:16px; border-radius:var(--radius); font-size:12px; overflow-x:auto;">student_id,emis_number,zone,year,surname,name,sex,age,class
+2019165001640001,500164,CHIGONTHI,2019,BANDA,CHISOMO,F,8,STD 1
+2019165001640002,500164,CHIGONTHI,2019,PHIRI,KONDWANI,M,9,STD 2</pre>
           </div>
         </div>
       </div>
@@ -1701,7 +1674,7 @@ async function loadSchoolInfo(emisNumber) {
   }
 
   loadSchoolStats();
-  populateLINSearchYears();
+  loadRecentStudents();
 }
 
 async function loadSchoolStats() {
@@ -1722,141 +1695,24 @@ async function loadSchoolStats() {
   document.getElementById('stat-girls').textContent = (girls.count || 0).toLocaleString();
 }
 
-// Populate year dropdown on dashboard with available years for this school
-async function populateLINSearchYears() {
+async function loadRecentStudents() {
   if (!currentProfile?.emis_number) return;
-  const { data } = await db.from('students')
-    .select('year')
+  const { data } = await db.from('students').select('*')
     .eq('emis_number', currentProfile.emis_number)
-    .order('year', { ascending: false });
+    .order('created_at', { ascending: false }).limit(10);
 
-  const years = [...new Set((data || []).map(r => r.year))];
-  const sel = document.getElementById('lin-search-year');
-  if (!sel) return;
-  // Clear existing options except first
-  while (sel.options.length > 1) sel.remove(1);
-  years.forEach(y => {
-    const opt = document.createElement('option');
-    opt.value = y; opt.textContent = y;
-    sel.appendChild(opt);
-  });
-}
+  const rows = (data || []).map(s => `
+    <tr>
+      <td style="font-family:monospace;font-size:12px">${s.student_id}</td>
+      <td>${s.surname}</td>
+      <td>${s.name}</td>
+      <td>${s.sex}</td>
+      <td>${s.class}</td>
+      <td>${s.year}</td>
+      <td>${sourceBadge(s.source)}</td>
+    </tr>`).join('');
 
-// Debounced input handler
-let linSearchTimeout;
-function handleLINSearchInput() {
-  clearTimeout(linSearchTimeout);
-  const q = document.getElementById('lin-search-name').value.trim();
-  if (q.length >= 2) {
-    linSearchTimeout = setTimeout(performLINSearch, 350);
-  } else if (q.length === 0) {
-    document.getElementById('lin-results-container').innerHTML = '';
-  }
-}
-
-async function performLINSearch() {
-  const name = document.getElementById('lin-search-name').value.trim().toUpperCase();
-  const year = document.getElementById('lin-search-year').value;
-  const container = document.getElementById('lin-results-container');
-
-  if (!name && !year) { container.innerHTML = ''; return; }
-
-  container.innerHTML = `<div style="text-align:center;padding:24px"><div class="loading-spinner loading-spinner-dark"></div></div>`;
-
-  let query = db.from('students').select('*')
-    .eq('emis_number', currentProfile.emis_number);
-
-  if (year) query = query.eq('year', year);
-  if (name) query = query.or(`surname.ilike.%${name}%,name.ilike.%${name}%`);
-
-  query = query.order('year', { ascending: false }).order('surname').limit(50);
-
-  const { data, error } = await query;
-
-  if (error) {
-    container.innerHTML = `<div class="alert alert-error"><span>⚠</span>${error.message}</div>`;
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    container.innerHTML = `
-      <div class="card">
-        <div class="empty-state" style="padding:40px">
-          <div class="empty-state-icon">🔍</div>
-          <div class="empty-state-text">No learner found for "<strong>${name}</strong>"${year ? ' in ' + year : ''}</div>
-          <div class="text-sm text-muted" style="margin-top:8px">Check the spelling or try a different year</div>
-        </div>
-      </div>`;
-    return;
-  }
-
-  // Render result cards — large LIN display
-  const cards = data.map(s => `
-    <div class="lin-result-card" onclick="selectLINResult(this)" style="
-      background:var(--white);
-      border:2px solid var(--gray-100);
-      border-radius:var(--radius);
-      padding:16px 20px;
-      margin-bottom:10px;
-      cursor:pointer;
-      transition:all 0.15s;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      gap:12px;
-    "
-    onmouseover="this.style.borderColor='var(--gold)';this.style.background='rgba(240,165,0,0.03)'"
-    onmouseout="this.style.borderColor='var(--gray-100)';this.style.background='var(--white)'">
-      <div>
-        <div style="font-size:13px;color:var(--gray-500);margin-bottom:2px;">
-          ${s.surname} ${s.name} &bull; ${s.sex || '—'} &bull; ${s.class || '—'} &bull; ${s.year}
-        </div>
-        <div style="font-family:var(--font-heading);font-size:28px;font-weight:800;color:var(--navy);letter-spacing:1px;">
-          ${s.student_id}
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        ${sourceBadge(s.source)}
-        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();copyLIN('${s.student_id}', this)">
-          📋 Copy LIN
-        </button>
-      </div>
-    </div>`).join('');
-
-  container.innerHTML = `
-    <div style="font-size:13px;color:var(--gray-500);margin-bottom:10px;">
-      ${data.length} learner${data.length !== 1 ? 's' : ''} found
-    </div>
-    ${cards}`;
-}
-
-function copyLIN(lin, btn) {
-  navigator.clipboard.writeText(lin).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '✓ Copied!';
-    btn.style.background = 'var(--green)';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 2000);
-  }).catch(() => {
-    // Fallback for older browsers
-    const ta = document.createElement('textarea');
-    ta.value = lin;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    ta.remove();
-    toast('LIN copied: ' + lin, 'success');
-  });
-}
-
-function selectLINResult(card) {
-  // Highlight selected card
-  document.querySelectorAll('.lin-result-card').forEach(c => {
-    c.style.borderColor = 'var(--gray-100)';
-    c.style.background = 'var(--white)';
-  });
-  card.style.borderColor = 'var(--gold)';
-  card.style.background = 'rgba(240,165,0,0.05)';
+  renderTableRows('recent-students-body', rows, 'No students found. Add your first student!');
 }
 
 // ============================================================
@@ -1875,7 +1731,6 @@ function showPage(page) {
   closeSidebar();
 
   // Lazy-load page data
-  if (page === 'school-dashboard') { populateLINSearchYears(); document.getElementById('lin-search-name')?.focus(); }
   if (page === 'my-students') { myStudentsPage = 1; loadMyStudents(); }
   if (page === 'all-students') { allStudentsPage = 1; loadAllStudents(); }
   if (page === 'all-schools') loadAllSchools();
@@ -1985,7 +1840,7 @@ async function handleAddStudent() {
   toast('Student registered: ' + studentId, 'success');
   resetStudentForm();
   loadSchoolStats();
-  populateLINSearchYears();
+  loadRecentStudents();
 }
 
 function resetStudentForm() {
@@ -2272,14 +2127,12 @@ async function handleCSVUpload(event) {
   statusEl.innerHTML = '';
 
   let totalInserted = 0;
-  let totalSkipped = 0;
   let totalErrors = 0;
-  const errorDetails = [];
 
   for (let fi = 0; fi < files.length; fi++) {
     const file = files[fi];
     progressText.textContent = `Processing: ${file.name}`;
-    const pct = Math.round((fi / files.length) * 100);
+    const pct = Math.round(((fi) / files.length) * 100);
     progressBar.style.width = pct + '%';
     progressPct.textContent = pct + '%';
 
@@ -2287,33 +2140,28 @@ async function handleCSVUpload(event) {
       const text = await file.text();
       const rows = parseCSV(text);
 
+      // Batch insert
       const BATCH = 100;
       for (let i = 0; i < rows.length; i += BATCH) {
-        const batch = [];
+        const batch = rows.slice(i, i + BATCH).map(r => ({
+          student_id: r.student_id?.trim(),
+          emis_number: r.emis_number?.trim(),
+          zone: r.zone?.trim().toUpperCase(),
+          year: r.year?.trim(),
+          surname: r.surname?.trim().toUpperCase(),
+          name: r.name?.trim().toUpperCase(),
+          sex: r.sex?.trim().toUpperCase(),
+          age: parseInt(r.age),
+          class: r.class?.trim(),
+          source: 'imported'
+        })).filter(r => r.student_id && r.emis_number);
 
-        for (const r of rows.slice(i, i + BATCH)) {
-          const mapped = mapCSVRow(r);
-          if (!mapped) { totalSkipped++; continue; }
-          batch.push(mapped);
-        }
-
-        if (batch.length === 0) continue;
-
-        const { error } = await db.from('students').upsert(batch, {
-          onConflict: 'student_id',
-          ignoreDuplicates: false  // update if exists
-        });
-
-        if (error) {
-          totalErrors += batch.length;
-          errorDetails.push(error.message);
-        } else {
-          totalInserted += batch.length;
-        }
+        const { error } = await db.from('students').upsert(batch, { onConflict: 'student_id', ignoreDuplicates: true });
+        if (error) totalErrors += batch.length;
+        else totalInserted += batch.length;
       }
     } catch (err) {
       totalErrors++;
-      errorDetails.push(`${file.name}: ${err.message}`);
       console.error(err);
     }
   }
@@ -2322,76 +2170,10 @@ async function handleCSVUpload(event) {
   progressPct.textContent = '100%';
   progressText.textContent = 'Complete!';
 
-  let msg = `Import complete: <strong>${totalInserted.toLocaleString()} records saved</strong>`;
-  if (totalSkipped > 0) msg += `, ${totalSkipped} rows skipped (missing LIN)`;
-  if (totalErrors > 0) msg += `, ${totalErrors} errors`;
-
-  const alertType = totalErrors > 0 && totalInserted === 0 ? 'alert-error' : 'alert-success';
-  const icon = totalErrors > 0 && totalInserted === 0 ? '⚠' : '✓';
-  statusEl.innerHTML = `<div class="alert ${alertType}"><span>${icon}</span><div>${msg}${errorDetails.length ? '<br/><span class="text-sm">' + errorDetails.slice(0,3).join('<br/>') + '</span>' : ''}</div></div>`;
+  statusEl.innerHTML = `<div class="alert alert-success"><span>✓</span>Import complete: <strong>${totalInserted.toLocaleString()} records imported</strong>${totalErrors > 0 ? `, ${totalErrors} skipped due to errors` : ''}.</div>`;
   toast(`Imported ${totalInserted} records`, 'success');
 
   event.target.value = '';
-}
-
-// Maps a CSV row to the students table format.
-// Accepts original format: Zone, School, Surname, Name, LIN
-// Also accepts old format:  student_id, emis_number, zone, year, surname, name, sex, age, class
-function mapCSVRow(r) {
-  // Detect format by checking for LIN column
-  const lin = (r.lin || r.LIN || r['learner identification number'] || '').toString().trim().replace(/\s/g, '');
-  const hasLIN = lin.length === 16 && /^\d{16}$/.test(lin);
-
-  let student_id, emis_number, zone, year, surname, name, sex, age, cls;
-
-  if (hasLIN) {
-    // === ORIGINAL FORMAT: Zone, School, Surname, Name, LIN ===
-    student_id  = lin;
-    year        = lin.substring(0, 4);          // digits 1-4
-    emis_number = lin.substring(6, 12);         // digits 7-12
-    zone        = (r.zone || r.Zone || r.ZONE || '').toString().trim().toUpperCase();
-    surname     = (r.surname || r.Surname || r.SURNAME || '').toString().trim().toUpperCase();
-    name        = (r.name || r.Name || r.NAME || r['first name'] || r['firstname'] || '').toString().trim().toUpperCase();
-    sex         = (r.sex || r.Sex || r.SEX || r.gender || r.Gender || '').toString().trim().toUpperCase();
-    age         = parseInt(r.age || r.Age || r.AGE) || 0;
-    cls         = (r.class || r.Class || r.CLASS || r.grade || r.Grade || '').toString().trim();
-  } else {
-    // === OLD FORMAT: student_id, emis_number, zone, year, surname, name ... ===
-    student_id  = (r.student_id || r.studentid || r['student id'] || '').toString().trim();
-    emis_number = (r.emis_number || r.emis || r['emis number'] || '').toString().trim();
-    zone        = (r.zone || r.Zone || '').toString().trim().toUpperCase();
-    year        = (r.year || r.Year || '').toString().trim();
-    surname     = (r.surname || r.Surname || '').toString().trim().toUpperCase();
-    name        = (r.name || r.Name || '').toString().trim().toUpperCase();
-    sex         = (r.sex || r.Sex || '').toString().trim().toUpperCase();
-    age         = parseInt(r.age || r.Age) || 0;
-    cls         = (r.class || r.Class || '').toString().trim();
-
-    if (!student_id || !emis_number) return null;
-  }
-
-  // Final validation — must have student_id and emis_number
-  if (!student_id || student_id.length < 6) return null;
-  if (!emis_number || emis_number.length !== 6) return null;
-
-  // If zone is blank, try to look it up from the schools cache
-  if (!zone && allSchoolsCache.length) {
-    const school = allSchoolsCache.find(s => s.emis_number === emis_number);
-    if (school) zone = school.zone;
-  }
-
-  return {
-    student_id,
-    emis_number,
-    zone:   zone || 'UNKNOWN',
-    year:   year || student_id.substring(0, 4),
-    surname: surname || '',
-    name:   name || '',
-    sex:    ['M','F'].includes(sex) ? sex : '',
-    age:    isNaN(age) ? 0 : age,
-    class:  cls || '',
-    source: 'imported'
-  };
 }
 
 function parseCSV(text) {
@@ -2407,11 +2189,11 @@ function parseCSV(text) {
 }
 
 function downloadCSVTemplate() {
-  const template = `Zone,School,Surname,Name,LIN\nCHOWO,Chowo Primary School,BANDA,CHISOMO,2020165004000001\nCHOWO,Chowo Primary School,PHIRI,KONDWANI,2020165004000002\nNKHOMA,Nkhoma Primary School,MWALE,TADALA,2020164564500003`;
+  const template = `student_id,emis_number,zone,year,surname,name,sex,age,class\n2019165001640001,500164,CHIGONTHI,2019,BANDA,CHISOMO,F,8,STD 1\n2019165001640002,500164,CHIGONTHI,2019,PHIRI,KONDWANI,M,9,STD 2`;
   const blob = new Blob([template], { type: 'text/csv' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'llre_emis_csv_template.csv';
+  a.download = 'llre_emis_import_template.csv';
   a.click();
 }
 
@@ -2513,10 +2295,6 @@ function downloadExport(data, format, filename) {
 // STARTUP
 // ============================================================
 window.addEventListener('DOMContentLoaded', async () => {
-  // Hide loader once JS is running
-  const loader = document.getElementById('page-loader');
-  if (loader) loader.style.display = 'none';
-
   const { data: { user } } = await db.auth.getUser();
   if (user) {
     await initApp(user);
