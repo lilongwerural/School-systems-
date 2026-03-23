@@ -4,12 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LLRE EMIS School System</title>
+  <!-- Fonts: non-blocking, with system fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/></noscript>
   <script src="env-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer crossorigin="anonymous"></script>
   <style>
     /* ============================================================
        DESIGN SYSTEM - LLRE EMIS
@@ -36,8 +38,8 @@
       --shadow-lg: 0 8px 40px rgba(13,27,42,0.25);
       --radius: 8px;
       --radius-lg: 16px;
-      --font-heading: 'Barlow Condensed', sans-serif;
-      --font-body: 'Barlow', sans-serif;
+      --font-heading: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+      --font-body: 'Barlow', Arial, sans-serif;
       --transition: all 0.2s ease;
     }
 
@@ -856,6 +858,19 @@
   </style>
 </head>
 <body>
+
+<!-- Page loading indicator - hidden once JS runs -->
+<div id="page-loader" style="
+  position:fixed;inset:0;
+  background:linear-gradient(160deg,#0d1b2a 0%,#1b2e45 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;color:white;font-family:Arial,sans-serif;">
+  <img src="logo.png" style="width:64px;height:64px;object-fit:contain;margin-bottom:20px;" onerror="this.style.display='none'"/>
+  <div style="font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:8px;">LLRE EMIS</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:24px;">Lilongwe Rural East</div>
+  <div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.2);border-top-color:#f0a500;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:16px;">Loading system...</div>
+</div>
 
 <!-- ============================================================ TOAST CONTAINER -->
 <div id="toast-container"></div>
@@ -2498,6 +2513,10 @@ function downloadExport(data, format, filename) {
 // STARTUP
 // ============================================================
 window.addEventListener('DOMContentLoaded', async () => {
+  // Hide loader once JS is running
+  const loader = document.getElementById('page-loader');
+  if (loader) loader.style.display = 'none';
+
   const { data: { user } } = await db.auth.getUser();
   if (user) {
     await initApp(user);
