@@ -1,0 +1,10 @@
+# Never commit generated credentials file
+env-config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# SQL files (sensitive - keep locally only)
+sql/
+*.sql
